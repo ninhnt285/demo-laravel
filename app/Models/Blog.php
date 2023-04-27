@@ -10,4 +10,8 @@ class Blog extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -14,6 +14,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Authorization
+Route::controller(\App\Http\Controllers\Api\AuthController::class)->group(function() {
+    Route::post('register', 'register');
+    Route::post('login', 'login');
 });
+
+Route::middleware('auth:sanctum')->group(function () {
+    // Demo
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+    // Blogs
+    Route::apiResource('blogs', \App\Http\Controllers\Api\BlogController::class)->except(['index', 'show']);
+});
+
+Route::apiResource('blogs', \App\Http\Controllers\Api\BlogController::class)->only(['index', 'show']);
