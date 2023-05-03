@@ -23,4 +23,12 @@ class BlogResource extends JsonResource
             'updated_at' => $this->updated_at
         ];
     }
+
+    public function with(Request $request)
+    {
+        return [
+            "success" => true,
+            "message" => "Fetch blog detail successfully!"
+        ];
+    }
 }

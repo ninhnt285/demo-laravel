@@ -6,6 +6,7 @@ use App\Http\Resources\BlogCollection;
 use App\Http\Resources\BlogResource;
 use App\Models\Blog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class BlogController extends BaseController
 {
@@ -24,10 +25,14 @@ class BlogController extends BaseController
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:100|min:10',
             'content' => 'required|string|min:10',
         ]);
+
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
 
         $input = $request->all();
         $input['user_id'] = auth()->id();
@@ -51,10 +56,14 @@ class BlogController extends BaseController
      */
     public function update(Request $request, Blog $blog)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:100|min:10',
             'content' => 'required|string|min:10',
         ]);
+
+        if($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
 
         $input = $request->all();
         $blog->fill($input)->save();

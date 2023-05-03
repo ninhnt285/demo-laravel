@@ -11,15 +11,24 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 
 class AuthController extends BaseController {
-
     public function login(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
             $success['token'] =  $user->createToken('MyApp')->plainTextToken;
             $success['name'] =  $user->name;
+            $success['id'] = $user->id;
             return $this->sendResponse($success, 'User login successfully.');
         } else {
-            return $this->sendError('Wrong password or email!.', ['error'=>'Wrong password or email!']);
+            return $this->sendError('Wrong password or email!.', ['email'=>['These credentials do not match our records.']]);
         }
     }
 
@@ -36,10 +45,16 @@ class AuthController extends BaseController {
         }
         try {
             $input = $request->all();
+            // TODO: Check existed user
+            if ($oldUser = User::where('email', $input['email'])->first()) {
+                return $this->sendError("Register unsuccessfully!", ['email' => ['The email was existed!']]);
+            }
+
             $input['password'] = bcrypt($input['password']);
             $user = User::create($input);
             $success['token'] =  $user->createToken('MyApp')->plainTextToken;
             $success['name'] =  $user->name;
+            $success['id'] = $user->id;
 
             return $this->sendResponse($success, 'User register successfully.');
         } catch (QueryException $err) {
