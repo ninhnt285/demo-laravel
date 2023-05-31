@@ -26,6 +26,7 @@ class AuthController extends BaseController {
             $success['token'] =  $user->createToken('MyApp')->plainTextToken;
             $success['name'] =  $user->name;
             $success['id'] = $user->id;
+            $success['email'] = $user->email;
             return $this->sendResponse($success, 'User login successfully.');
         } else {
             return $this->sendError('Wrong password or email!.', ['email'=>['These credentials do not match our records.']]);
@@ -55,6 +56,7 @@ class AuthController extends BaseController {
             $success['token'] =  $user->createToken('MyApp')->plainTextToken;
             $success['name'] =  $user->name;
             $success['id'] = $user->id;
+            $success['email'] = $user->email;
 
             return $this->sendResponse($success, 'User register successfully.');
         } catch (QueryException $err) {
